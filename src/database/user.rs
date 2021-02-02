@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use sqlx::{postgres::PgRow, Done, Error, PgPool, Row};
 use std::time::SystemTime;
-use sqlx::{Done, Error, PgPool, postgres::PgRow, Row};
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -17,7 +17,9 @@ pub struct UserDataOptional {
 
 impl UserDataOptional {
     pub fn to_user_data(&self) -> UserData {
-        let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).expect("Cannot get timestamp.");
+        let now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("Cannot get timestamp.");
         let now_time = NaiveDateTime::from_timestamp(now.as_secs() as i64, 0);
 
         UserData {
@@ -55,11 +57,19 @@ impl UserData {
         Self {
             id: row.try_get("id").expect("Cannot parse the user id."),
             username: row.try_get("username").expect("Cannot parse the username."),
-            password: row.try_get("password").expect("Cannot parse the user password."),
+            password: row
+                .try_get("password")
+                .expect("Cannot parse the user password."),
 
-            online: row.try_get("online").expect("Cannot parse the user online status."),
-            last_online: row.try_get("last_online").expect("Cannot parse the user last online timestamp."),
-            created_at: row.try_get("created_at").expect("Cannot parse the user created at timestamp."),
+            online: row
+                .try_get("online")
+                .expect("Cannot parse the user online status."),
+            last_online: row
+                .try_get("last_online")
+                .expect("Cannot parse the user last online timestamp."),
+            created_at: row
+                .try_get("created_at")
+                .expect("Cannot parse the user created at timestamp."),
         }
     }
 }

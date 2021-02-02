@@ -1,8 +1,8 @@
-use actix_web::{get, HttpResponse, post, Result, Scope, web};
+use super::Error;
 use crate::database::{User, UserData, UserDataOptional};
+use actix_web::{get, post, web, HttpResponse, Result, Scope};
 use serde::Deserialize;
 use sqlx::PgPool;
-use super::Error;
 use uuid::Uuid;
 
 #[get("/all")]
@@ -17,9 +17,9 @@ async fn all(client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
             for row in rows.iter() {
                 users.push(UserData::from_row(row));
             }
-        
+
             Ok(HttpResponse::Ok().json(users))
-        },
+        }
     }
 }
 
@@ -30,15 +30,20 @@ struct FindQuery {
 }
 
 #[get("/find")]
-async fn find(web::Query(query): web::Query<FindQuery>, client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
+async fn find(
+    web::Query(query): web::Query<FindQuery>,
+    client: web::Data<PgPool>,
+) -> Result<HttpResponse, Error> {
     if query.id.is_some() && query.username.is_some() {
-        Err(Error::new("Cannot find a user by id and username at the same time."))
+        Err(Error::new(
+            "Cannot find a user by id and username at the same time.",
+        ))
     } else if let Some(id) = query.id {
         match User::from_id(client.get_ref(), &id).await {
             Err(e) => {
                 println!("User by id: Error: {}", e);
                 Err(Error::new("Cannot find this user."))
-            },
+            }
             Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
         }
     } else if let Some(username) = query.username.clone() {
@@ -46,7 +51,7 @@ async fn find(web::Query(query): web::Query<FindQuery>, client: web::Data<PgPool
             Err(e) => {
                 println!("User by username: Error: {}", e);
                 Err(Error::new("Cannot find this user."))
-            },
+            }
             Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
         }
     } else {
@@ -70,8 +75,8 @@ async fn create(
         Err(e) => {
             println!("User Create: Error: {}", e);
             Err(Error::new("Cannot create the user."))
-        },
-        Ok(_) => Ok(HttpResponse::Ok().json(user.get_data()))
+        }
+        Ok(_) => Ok(HttpResponse::Ok().json(user.get_data())),
     }
 }
 
