@@ -1,4 +1,6 @@
 # NextChat Server (API)
+This repository contains the source code of the server application for NextChat written with Rustlang.
+
 -   [Pre-requisites](#Pre-requisites)
 -   [Endpoints](#Endpoints)
     - [Users](#Users)
