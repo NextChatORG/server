@@ -1,5 +1,6 @@
 use actix_web::{get, HttpResponse, post, Result, Scope, web};
 use crate::database::{User, UserData, UserDataOptional};
+use serde::Deserialize;
 use sqlx::PgPool;
 use super::Error;
 use uuid::Uuid;
@@ -22,33 +23,34 @@ async fn all(client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
     }
 }
 
-#[get("/id/{id}")]
-async fn find_by_id(
-    path: web::Path<(Uuid,)>,
-    client: web::Data<PgPool>,
-) -> Result<HttpResponse, Error> {
-    let id: Uuid = path.into_inner().0;
-    match User::from_id(client.get_ref(), &id).await {
-        Err(e) => {
-            println!("User by id: Error: {}", e);
-            Err(Error::new("Cannot find this user."))
-        },
-        Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
-    }
+#[derive(Deserialize)]
+struct FindQuery {
+    id: Option<Uuid>,
+    username: Option<String>,
 }
 
-#[get("/username/{username}")]
-async fn find_by_username(
-    path: web::Path<(String,)>,
-    client: web::Data<PgPool>,
-) -> Result<HttpResponse, Error> {
-    let username: String = path.into_inner().0;
-    match User::from_username(client.get_ref(), &username).await {
-        Err(e) => {
-            println!("User by username: Error: {}", e);
-            Err(Error::new("Cannot find this user."))
-        },
-        Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
+#[get("/find")]
+async fn find(web::Query(query): web::Query<FindQuery>, client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
+    if query.id.is_some() && query.username.is_some() {
+        Err(Error::new("Cannot find a user by id and username at the same time."))
+    } else if let Some(id) = query.id {
+        match User::from_id(client.get_ref(), &id).await {
+            Err(e) => {
+                println!("User by id: Error: {}", e);
+                Err(Error::new("Cannot find this user."))
+            },
+            Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
+        }
+    } else if let Some(username) = query.username.clone() {
+        match User::from_username(client.get_ref(), &username).await {
+            Err(e) => {
+                println!("User by username: Error: {}", e);
+                Err(Error::new("Cannot find this user."))
+            },
+            Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
+        }
+    } else {
+        Err(Error::new("Invalid query."))
     }
 }
 
@@ -76,10 +78,6 @@ async fn create(
 pub fn scope() -> Scope {
     web::scope("/users")
         .service(all)
-        .service(
-            web::scope("/find")
-                .service(find_by_id)
-                .service(find_by_username)
-        )
+        .service(find)
         .service(create)
 }

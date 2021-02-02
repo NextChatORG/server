@@ -34,7 +34,7 @@ Response example:
 ]
 ```
 
--   _GET_ `/users/find/id/{id}`
+-   _GET_ `/users/find?id={id}`
 
 Response example:
 ```json
@@ -48,7 +48,7 @@ Response example:
 }
 ```
 
--   _GET_ `/users/find/username/{username}`
+-   _GET_ `/users/find?username={username}`
 
 Response example:
 ```json
@@ -65,7 +65,7 @@ Response example:
 -   _POST_ `/users/create`
 
 Body example:
-```json
+```
 {
     "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400", // Optional
     "username": "danielsolartech", // Required
