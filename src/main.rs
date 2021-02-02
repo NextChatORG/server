@@ -1,7 +1,8 @@
+mod connection;
 mod database;
 mod routes;
 
-use actix_web::{App, HttpServer};
+use actix_web::{App, HttpServer, web::resource};
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::env;
@@ -29,6 +30,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .data(client.clone())
+            .service(resource("/ws/").to(routes::websocket))
             .service(routes::users::scope())
     })
     .bind((host, port))?

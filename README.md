@@ -17,6 +17,9 @@ Error response example (_400 Bad Request_):
 }
 ```
 
+### WebSockets
+-   _WebSocket_ `/ws/?user_id={id}`
+
 ### Users
 -   _GET_ `/users/all`
 
