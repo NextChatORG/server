@@ -1,4 +1,6 @@
-use actix::{Actor, ActorContext, AsyncContext, Handler, prelude::Message as ActixMessage, StreamHandler};
+use actix::{
+    prelude::Message as ActixMessage, Actor, ActorContext, AsyncContext, Handler, StreamHandler,
+};
 use actix_web_actors::ws::{Message as WebSocketMessage, ProtocolError, WebsocketContext};
 use std::time::{Duration, Instant};
 use uuid::Uuid;
@@ -37,12 +39,16 @@ impl Connection {
 }
 
 impl StreamHandler<Result<WebSocketMessage, ProtocolError>> for Connection {
-    fn handle(&mut self, message: Result<WebSocketMessage, ProtocolError>, context: &mut Self::Context) {
+    fn handle(
+        &mut self,
+        message: Result<WebSocketMessage, ProtocolError>,
+        context: &mut Self::Context,
+    ) {
         let message = match message {
             Err(_) => {
                 context.stop();
                 return;
-            },
+            }
             Ok(message) => message,
         };
 
@@ -50,15 +56,15 @@ impl StreamHandler<Result<WebSocketMessage, ProtocolError>> for Connection {
             WebSocketMessage::Ping(message) => {
                 self.last_ping = Instant::now();
                 context.ping(&message);
-            },
+            }
             WebSocketMessage::Pong(_) => {
                 self.last_ping = Instant::now();
-            },
+            }
             WebSocketMessage::Text(text) => {
                 let text = text.trim();
                 println!("User ID: {}", self.get_id());
                 println!("Text from sockets: {}", text);
-            },
+            }
             _ => unimplemented!("Unimplemented feature."),
         }
     }

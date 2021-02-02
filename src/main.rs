@@ -2,7 +2,7 @@ mod connection;
 mod database;
 mod routes;
 
-use actix_web::{App, HttpServer, web::resource};
+use actix_web::{web::resource, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::env;

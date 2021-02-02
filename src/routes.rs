@@ -1,8 +1,8 @@
 pub mod users;
 
-use actix_web_actors::ws;
-use actix_web::{error, Error as ActixError, http::StatusCode, HttpRequest, HttpResponse, web};
 use crate::connection::Connection;
+use actix_web::{error, http::StatusCode, web, Error as ActixError, HttpRequest, HttpResponse};
+use actix_web_actors::ws;
 use derive_more::{Display, Error as DeriveError};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -39,9 +39,5 @@ pub async fn websocket(
 ) -> Result<HttpResponse, ActixError> {
     let user_id: Uuid = info.user_id;
 
-    ws::start(
-        Connection::new(user_id),
-        &req,
-        stream,
-    )
+    ws::start(Connection::new(user_id), &req, stream)
 }
