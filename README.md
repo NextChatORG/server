@@ -67,9 +67,9 @@ Response example:
 Body example:
 ```json
 {
-    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400", # Optional
-    "username": "danielsolartech", # Required
-    "password": "1234" # Required
+    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400", // Optional
+    "username": "danielsolartech", // Required
+    "password": "1234" // Required
 }
 ```
 
