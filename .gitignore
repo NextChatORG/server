@@ -1,0 +1,5 @@
+# Rust
+/target
+
+# Development
+*.env
