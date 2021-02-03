@@ -3,7 +3,8 @@ This repository contains the source code of the server application for NextChat 
 
 -   [Pre-requisites](#Pre-requisites)
 -   [Endpoints](#Endpoints)
-    - [Users](#Users)
+    -   [Users](#Users)
+-   [Authors](#Authors)
 -   [Changelog](#Changelog)
 -   [Copyright](#Copyright)
 
@@ -89,6 +90,11 @@ Response example:
     "created_at": "2021-02-02T18:27:08"
 }
 ```
+
+## Authors
+-   [@danielsolartech](https://github.com/danielsolartech) - Initial project
+-   [@JheysonDev](https://github.com/JheysonDev) - Icon Design
+-   [@TeoDev1611](https://github.com/TeoDev1611) - Icon Design
 
 ## Changelog
 View the lastest repository changes in the [CHANGELOG.md](./CHANGELOG.md) file.
