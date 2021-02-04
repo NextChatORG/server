@@ -1,6 +1,7 @@
 mod connection;
 mod database;
 mod routes;
+mod security;
 
 use actix_web::{web::resource, App, HttpServer};
 use dotenv::dotenv;

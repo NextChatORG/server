@@ -11,6 +11,27 @@ This repository contains the source code of the server application for NextChat 
 ## Pre-requisites
 -   [RustLang](https://www.rust-lang.org)
 
+## Requirements
+
+### Argonautica (Argon2)
+Ubuntu or Debian:
+```bash
+apt install clang llvm-dev libclang-dev
+```
+
+MacOS:
+```
+brew install llvm
+```
+
+Arch Linux:
+```bash
+pacman -S clang
+```
+
+Windows:
+Download a Pre-built binary file [here](https://releases.llvm.org/download.html).
+
 ## Endpoints
 
 Error response example (_400 Bad Request_):
@@ -32,7 +53,7 @@ Response example:
     {
         "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
         "username": "danielsolartech",
-        "password": "1234",
+        "password": null,
         "online": false,
         "last_online": "2021-02-02T18:27:08",
         "created_at": "2021-02-02T18:27:08"
@@ -47,7 +68,7 @@ Response example:
 {
     "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
     "username": "danielsolartech",
-    "password": "1234",
+    "password": null,
     "online": false,
     "last_online": "2021-02-02T18:27:08",
     "created_at": "2021-02-02T18:27:08"
@@ -61,34 +82,41 @@ Response example:
 {
     "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
     "username": "danielsolartech",
-    "password": "1234",
+    "password": null,
     "online": false,
     "last_online": "2021-02-02T18:27:08",
     "created_at": "2021-02-02T18:27:08"
 }
 ```
 
--   _POST_ `/users/create`
+-   _POST_ `/users/signup`
 
 Body example:
-```
+```json
 {
-    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400", // Optional
-    "username": "danielsolartech", // Required
-    "password": "1234" // Required
+    "username": "danielsolartech",
+    "password": "1234"
 }
 ```
 
 Response example:
+```
+5959ad9c-598e-4deb-bcbe-053c1f73b400
+```
+
+-   _POST_ `/users/signin`
+
+Body example:
 ```json
 {
-    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
     "username": "danielsolartech",
-    "password": "1234",
-    "online": false,
-    "last_online": "2021-02-02T18:27:08",
-    "created_at": "2021-02-02T18:27:08"
+    "password": "1234"
 }
+```
+
+Response example:
+```
+5959ad9c-598e-4deb-bcbe-053c1f73b400
 ```
 
 ## Authors

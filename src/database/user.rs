@@ -5,47 +5,10 @@ use std::time::SystemTime;
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct UserDataOptional {
-    id: Option<Uuid>,
-    pub username: Option<String>,
-    pub password: Option<String>,
-
-    online: Option<bool>,
-    last_online: Option<NaiveDateTime>,
-    created_at: Option<NaiveDateTime>,
-}
-
-impl UserDataOptional {
-    pub fn to_user_data(&self) -> UserData {
-        let now = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .expect("Cannot get timestamp.");
-        let now_time = NaiveDateTime::from_timestamp(now.as_secs() as i64, 0);
-
-        UserData {
-            id: self.id.unwrap_or(Uuid::new_v4()),
-            username: self.username.clone().unwrap_or(String::new()),
-            password: self.password.clone().unwrap_or(String::new()),
-
-            online: self.online.unwrap_or(false),
-            last_online: self.last_online.unwrap_or(now_time),
-            created_at: self.created_at.unwrap_or(now_time),
-        }
-    }
-
-    pub fn to_user(&self) -> User {
-        User {
-            data: self.to_user_data(),
-            in_database: false,
-        }
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct UserData {
     id: Uuid,
     username: String,
-    password: String,
+    password: Option<String>,
 
     online: bool,
     last_online: NaiveDateTime,
@@ -53,13 +16,35 @@ pub struct UserData {
 }
 
 impl UserData {
-    pub fn from_row(row: &PgRow) -> Self {
+    pub fn default() -> Self {
+        let now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("Cannot get timestamp.");
+        let now_time = NaiveDateTime::from_timestamp(now.as_secs() as i64, 0);
+
+        Self {
+            id: Uuid::new_v4(),
+            username: String::new(),
+            password: None,
+
+            online: false,
+            last_online: now_time,
+            created_at: now_time,
+        }
+    }
+
+    pub fn from_row(row: &PgRow, with_password: bool) -> Self {
         Self {
             id: row.try_get("id").expect("Cannot parse the user id."),
             username: row.try_get("username").expect("Cannot parse the username."),
-            password: row
-                .try_get("password")
-                .expect("Cannot parse the user password."),
+            password: if with_password {
+                Some(
+                    row.try_get("password")
+                        .expect("Cannot parse the user password."),
+                )
+            } else {
+                None
+            },
 
             online: row
                 .try_get("online")
@@ -72,6 +57,18 @@ impl UserData {
                 .expect("Cannot parse the user created at timestamp."),
         }
     }
+
+    pub fn get_id(&self) -> Uuid {
+        self.id
+    }
+
+    pub fn set_username(&mut self, username: String) {
+        self.username = username;
+    }
+
+    pub fn set_password(&mut self, password: String) {
+        self.password = Some(crate::security::encrypt_password(password));
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -81,46 +78,84 @@ pub struct User {
 }
 
 impl User {
-    pub fn from_row(row: &PgRow) -> Self {
+    pub fn default() -> Self {
         Self {
-            data: UserData::from_row(row),
+            data: UserData::default(),
+            in_database: false,
+        }
+    }
+
+    pub fn from_row(row: &PgRow, with_password: bool) -> Self {
+        Self {
+            data: UserData::from_row(row, with_password),
             in_database: true,
         }
     }
 
-    pub async fn from_id(client: &PgPool, id: &Uuid) -> Result<Self, Error> {
-        let result = sqlx::query("SELECT * FROM users WHERE id = $1")
-            .bind(id)
-            .fetch_one(client)
-            .await?;
+    pub async fn from_id(client: &PgPool, id: &Uuid, with_password: bool) -> Result<Self, Error> {
+        let mut query = String::from("SELECT id, username, ");
+        if with_password {
+            query.push_str("password, ");
+        }
+        query.push_str("online, last_online, created_at FROM users WHERE id = $1");
 
-        Ok(User::from_row(&result))
+        let result = sqlx::query(&query).bind(id).fetch_one(client).await?;
+
+        Ok(User::from_row(&result, with_password))
     }
 
-    pub async fn from_username(client: &PgPool, username: &String) -> Result<Self, Error> {
-        let result = sqlx::query("SELECT * FROM users WHERE username = $1")
-            .bind(username)
-            .fetch_one(client)
-            .await?;
+    pub async fn from_username(
+        client: &PgPool,
+        username: &String,
+        with_password: bool,
+    ) -> Result<Self, Error> {
+        let mut query = String::from("SELECT id, username, ");
+        if with_password {
+            query.push_str("password, ");
+        }
+        query.push_str("online, last_online, created_at FROM users WHERE username = $1");
 
-        Ok(User::from_row(&result))
+        let result = sqlx::query(&query).bind(username).fetch_one(client).await?;
+
+        Ok(User::from_row(&result, with_password))
     }
 
     pub fn get_data(&self) -> UserData {
         self.data.clone()
     }
 
-    pub async fn save(&mut self, client: &PgPool) -> Result<(), Error> {
+    pub fn is_password(&self, password: String) -> bool {
+        if self.data.password.is_none() {
+            panic!("The user password cannot be found.");
+        }
+
+        crate::security::verify_password(password, self.data.password.clone().unwrap())
+    }
+
+    pub async fn save(&mut self, client: &PgPool, with_password: bool) -> Result<(), Error> {
         let query: &str = if self.in_database {
-            "UPDATE FROM users SET username = $2, password = $3, online = $4, last_online = $5, created_at = $6 WHERE id = $1"
+            if with_password {
+                "UPDATE FROM users SET username = $2, password = $3, online = $4, last_online = $5, created_at = $6 WHERE id = $1"
+            } else {
+                "UPDATE FROM users SET username = $2, online = $3, last_online = $4, created_at = $5 WHERE id = $1"
+            }
         } else {
-            "INSERT INTO users (id, username, password, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5, $6)"
+            if with_password {
+                "INSERT INTO users (id, username, password, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5, $6)"
+            } else {
+                "INSERT INTO users (id, username, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5)"
+            }
         };
 
-        let result = sqlx::query(query)
+        let mut query = sqlx::query(query)
             .bind(&self.data.id)
-            .bind(&self.data.username)
-            .bind(&self.data.password)
+            .bind(&self.data.username);
+
+        if with_password {
+            query = query.bind(&self.data.password);
+        }
+
+        let result = query
             .bind(&self.data.online)
             .bind(&self.data.last_online)
             .bind(&self.data.created_at)

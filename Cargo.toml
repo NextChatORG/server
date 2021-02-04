@@ -8,6 +8,7 @@ edition = "2018"
 actix = "0.10"
 actix-web = "3"
 actix-web-actors = "3"
+argonautica = { version = "0.2", features = ["simd"] }
 chrono = { version = "0.4", features = ["serde"] }
 derive_more = "0.99.11"
 dotenv = "0.15"
