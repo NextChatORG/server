@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### 04/02/2021
+-   Add `profile_image` column to users table.
+-   Fix `signup` user data from body.
 -   Change `/users/create` to `/users/signup`.
 -   Add `/users/signin` endpoint.
 -   Add password encryption with argon2.

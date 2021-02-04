@@ -10,6 +10,8 @@ pub struct UserData {
     username: String,
     password: Option<String>,
 
+    profile_image: String,
+
     online: bool,
     last_online: NaiveDateTime,
     created_at: NaiveDateTime,
@@ -26,6 +28,8 @@ impl UserData {
             id: Uuid::new_v4(),
             username: String::new(),
             password: None,
+
+            profile_image: String::new(),
 
             online: false,
             last_online: now_time,
@@ -45,6 +49,10 @@ impl UserData {
             } else {
                 None
             },
+
+            profile_image: row
+                .try_get("profile_image")
+                .expect("Cannot parse the user profile image."),
 
             online: row
                 .try_get("online")
@@ -97,7 +105,7 @@ impl User {
         if with_password {
             query.push_str("password, ");
         }
-        query.push_str("online, last_online, created_at FROM users WHERE id = $1");
+        query.push_str("profile_image, online, last_online, created_at FROM users WHERE id = $1");
 
         let result = sqlx::query(&query).bind(id).fetch_one(client).await?;
 
@@ -113,7 +121,7 @@ impl User {
         if with_password {
             query.push_str("password, ");
         }
-        query.push_str("online, last_online, created_at FROM users WHERE username = $1");
+        query.push_str("profile_image, online, last_online, created_at FROM users WHERE username = $1");
 
         let result = sqlx::query(&query).bind(username).fetch_one(client).await?;
 
@@ -122,6 +130,10 @@ impl User {
 
     pub fn get_data(&self) -> UserData {
         self.data.clone()
+    }
+
+    pub fn get_data_mut(&mut self) -> &mut UserData {
+        &mut self.data
     }
 
     pub fn is_password(&self, password: String) -> bool {
@@ -135,15 +147,15 @@ impl User {
     pub async fn save(&mut self, client: &PgPool, with_password: bool) -> Result<(), Error> {
         let query: &str = if self.in_database {
             if with_password {
-                "UPDATE FROM users SET username = $2, password = $3, online = $4, last_online = $5, created_at = $6 WHERE id = $1"
+                "UPDATE FROM users SET username = $2, password = $3, profile_image = $4, online = $5, last_online = $6, created_at = $7 WHERE id = $1"
             } else {
-                "UPDATE FROM users SET username = $2, online = $3, last_online = $4, created_at = $5 WHERE id = $1"
+                "UPDATE FROM users SET username = $2, profile_iamge = $3, online = $4, last_online = $5, created_at = $6 WHERE id = $1"
             }
         } else {
             if with_password {
-                "INSERT INTO users (id, username, password, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5, $6)"
+                "INSERT INTO users (id, username, password, profile_image, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"
             } else {
-                "INSERT INTO users (id, username, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5)"
+                "INSERT INTO users (id, username, profile_image, online, last_online, created_at) VALUES ($1, $2, $3, $4, $5, $6)"
             }
         };
 
@@ -156,6 +168,7 @@ impl User {
         }
 
         let result = query
+            .bind(&self.data.profile_image)
             .bind(&self.data.online)
             .bind(&self.data.last_online)
             .bind(&self.data.created_at)

@@ -83,8 +83,8 @@ async fn signup(
 
     let mut user = User::default();
 
-    user.get_data().set_username(user_data.username.clone());
-    user.get_data().set_password(user_data.password.clone());
+    user.get_data_mut().set_username(user_data.username.clone());
+    user.get_data_mut().set_password(user_data.password.clone());
 
     match user.save(client.get_ref(), true).await {
         Err(e) => {
