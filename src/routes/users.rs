@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 #[get("/all")]
 async fn all(client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
-    match sqlx::query("SELECT id, username, online, last_online, created_at FROM users")
+    match sqlx::query("SELECT id, username, profile_image, online, last_online, created_at FROM users")
         .fetch_all(client.get_ref())
         .await
     {
