@@ -9,28 +9,9 @@ This repository contains the source code of the server application for NextChat 
 -   [Copyright](#Copyright)
 
 ## Pre-requisites
+-   C++
 -   [RustLang](https://www.rust-lang.org)
-
-## Requirements
-
-### Argonautica (Argon2)
-Ubuntu or Debian:
-```bash
-apt install clang llvm-dev libclang-dev
-```
-
-MacOS:
-```
-brew install llvm
-```
-
-Arch Linux:
-```bash
-pacman -S clang
-```
-
-Windows:
-Download a Pre-built binary file [here](https://releases.llvm.org/download.html).
+-   [PostgreSQL 9.6.20](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
 
 ## Endpoints
 
