@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 05/02/2021
+-   Fix `/users/all` endpoint.
+-   Change `argonautica` to `rust-argon2`.
+
 ### 04/02/2021
 -   Add `profile_image` column to users table.
 -   Fix `signup` user data from body.
