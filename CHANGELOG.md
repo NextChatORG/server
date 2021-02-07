@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 07/02/2021
+-   Add error codes to user endpoints.
+-   Change response of `/users/signin` and `/users/signup`.
+
 ## 05/02/2021
 -   Fix `/users/all` endpoint.
 -   Change `argonautica` to `rust-argon2`.

@@ -70,8 +70,16 @@ impl UserData {
         self.id
     }
 
+    pub fn get_username(&self) -> String {
+        self.username.clone()
+    }
+
     pub fn set_username(&mut self, username: String) {
         self.username = username;
+    }
+
+    pub fn get_profile_image(&self) -> String {
+        self.profile_image.clone()
     }
 
     pub fn set_password(&mut self, password: String) {

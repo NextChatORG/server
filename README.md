@@ -18,7 +18,8 @@ This repository contains the source code of the server application for NextChat 
 Error response example (_400 Bad Request_):
 ```json
 {
-    "message": "The message is here"
+    "code": 0,
+    "message": "Unknown"
 }
 ```
 
@@ -27,6 +28,11 @@ Error response example (_400 Bad Request_):
 
 ### Users
 -   _GET_ `/users/all`
+
+Error codes:
+```
+0 -> Cannot get the users from the table.
+```
 
 Response example:
 ```json
@@ -44,6 +50,12 @@ Response example:
 
 -   _GET_ `/users/find?id={id}`
 
+Error codes:
+```
+0 -> Username and id in the query: `/users/find?id={}&username={username}`
+1 -> The user id does not exist.
+```
+
 Response example:
 ```json
 {
@@ -57,6 +69,12 @@ Response example:
 ```
 
 -   _GET_ `/users/find?username={username}`
+
+Error codes:
+```
+0 -> Username and id in the query: `/users/find?id={}&username={username}`
+1 -> The username does not exist.
+```
 
 Response example:
 ```json
@@ -72,6 +90,16 @@ Response example:
 
 -   _POST_ `/users/signup`
 
+Error codes:
+```
+0 -> Username is empty.
+1 -> Username between 4 and 15 characteres.
+2 -> Password is empty.
+3 -> Password between 8 and 40 characteres.
+4 -> Username already exists.
+5 -> Unknown.
+```
+
 Body example:
 ```json
 {
@@ -81,12 +109,24 @@ Body example:
 ```
 
 Response example:
-```
-5959ad9c-598e-4deb-bcbe-053c1f73b400
+```json
+{
+    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
+    "username": "danielsolartech",
+    "profile_image": ""
+}
 ```
 
 -   _POST_ `/users/signin`
 
+Error codes:
+```
+0 -> Username is empty.
+1 -> Password is empty.
+2 -> Username does not exist.
+3 -> The password is incorrect.
+```
+
 Body example:
 ```json
 {
@@ -96,8 +136,12 @@ Body example:
 ```
 
 Response example:
-```
-5959ad9c-598e-4deb-bcbe-053c1f73b400
+```json
+{
+    "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
+    "username": "danielsolartech",
+    "profile_image": ""
+}
 ```
 
 ## Authors

@@ -10,12 +10,20 @@ use uuid::Uuid;
 #[derive(Debug, DeriveError, Deserialize, Display, Serialize)]
 #[display(fmt = "Bad request")]
 pub struct Error {
+    code: i64,
     message: String,
 }
 
 impl Error {
-    pub fn new(message: &str) -> Self {
+    pub fn new(code: i64, message: String) -> Self {
         Self {
+            code, message,
+        }
+    }
+
+    pub fn new_str(code: i64, message: &str) -> Self {
+        Self {
+            code,
             message: String::from(message),
         }
     }
