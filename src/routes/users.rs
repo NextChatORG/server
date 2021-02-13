@@ -9,9 +9,11 @@ use uuid::Uuid;
 // 0 -> Cannot get the users.
 #[get("/all")]
 async fn all(client: web::Data<PgPool>) -> Result<HttpResponse, Error> {
-    match sqlx::query("SELECT id, username, profile_image, online, last_online, created_at FROM users")
-        .fetch_all(client.get_ref())
-        .await
+    match sqlx::query(
+        "SELECT id, username, profile_image, online, last_online, created_at FROM users",
+    )
+    .fetch_all(client.get_ref())
+    .await
     {
         Err(_) => Err(Error::new_str(0, "Cannot get the users.")),
         Ok(rows) => {
@@ -57,7 +59,10 @@ async fn find(
         match User::from_username(client.get_ref(), &username, false).await {
             Err(e) => {
                 println!("User by username: Error: {}", e);
-                Err(Error::new(1, format!("Cannot find the user by its name: {}", username)))
+                Err(Error::new(
+                    1,
+                    format!("Cannot find the user by its name: {}", username),
+                ))
             }
             Ok(user) => Ok(HttpResponse::Ok().json(user.get_data())),
         }
@@ -94,11 +99,17 @@ async fn signup(
     if user_data.username.len() == 0 {
         return Err(Error::new_str(0, "You must enter the username."));
     } else if user_data.username.len() < 4 || user_data.username.len() > 15 {
-        return Err(Error::new_str(1, "The username must be between 4 and 15 characteres."));
+        return Err(Error::new_str(
+            1,
+            "The username must be between 4 and 15 characteres.",
+        ));
     } else if user_data.password.len() == 0 {
         return Err(Error::new_str(2, "You must enter the password."));
-    } else if user_data.password.len() < 8 ||user_data.password.len() > 40 {
-        return Err(Error::new_str(3, "The password must be between 8 and 40 characteres."));
+    } else if user_data.password.len() < 8 || user_data.password.len() > 40 {
+        return Err(Error::new_str(
+            3,
+            "The password must be between 8 and 40 characteres.",
+        ));
     }
 
     let with_username = sqlx::query("SELECT COUNT(id) AS count FROM users WHERE username = $1")
@@ -125,7 +136,7 @@ async fn signup(
         Ok(_) => Ok(HttpResponse::Ok().json(SignUpAndSignInResponse {
             id: user.get_data().get_id().to_string(),
             username: user.get_data().get_username(),
-            profile_image: user.get_data().get_profile_image()
+            profile_image: user.get_data().get_profile_image(),
         })),
     }
 }
@@ -135,7 +146,6 @@ struct SignInBody {
     pub username: String,
     pub password: String,
 }
-
 
 // Error codes:
 // 0 -> Username is empty.
@@ -165,7 +175,7 @@ async fn signin(
                 Ok(HttpResponse::Ok().json(SignUpAndSignInResponse {
                     id: user.get_data().get_id().to_string(),
                     username: user.get_data().get_username(),
-                    profile_image: user.get_data().get_profile_image()
+                    profile_image: user.get_data().get_profile_image(),
                 }))
             }
         }

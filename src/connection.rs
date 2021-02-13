@@ -1,3 +1,4 @@
+use crate::database::User;
 use actix::{
     prelude::Message as ActixMessage, Actor, ActorContext, AsyncContext, Handler, StreamHandler,
 };
@@ -10,20 +11,20 @@ use uuid::Uuid;
 pub struct Message(pub String);
 
 pub struct Connection {
-    id: Uuid,
+    user: User,
     last_ping: Instant,
 }
 
 impl Connection {
-    pub fn new(id: Uuid) -> Self {
+    pub fn new(user: User) -> Self {
         Self {
-            id,
+            user,
             last_ping: Instant::now(),
         }
     }
 
     pub fn get_id(&self) -> Uuid {
-        self.id
+        self.user.get_data().get_id()
     }
 
     fn start_ping(&self, context: &mut WebsocketContext<Self>) {
@@ -62,8 +63,18 @@ impl StreamHandler<Result<WebSocketMessage, ProtocolError>> for Connection {
             }
             WebSocketMessage::Text(text) => {
                 let text = text.trim();
-                println!("User ID: {}", self.get_id());
-                println!("Text from sockets: {}", text);
+                println!(
+                    "New Message - User ID: {} - Message: {}",
+                    self.get_id(),
+                    text
+                );
+            }
+            WebSocketMessage::Close(reason) => {
+                println!(
+                    "Close Connection - User ID: {} - Reason: {:?}",
+                    self.get_id(),
+                    reason
+                );
             }
             _ => unimplemented!("Unimplemented feature."),
         }
@@ -82,6 +93,7 @@ impl Actor for Connection {
     type Context = WebsocketContext<Self>;
 
     fn started(&mut self, context: &mut Self::Context) {
+        println!("Username: {}", self.user.get_data().get_username());
         self.start_ping(context);
     }
 }

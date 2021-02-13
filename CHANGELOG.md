@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 12/02/2021
+-   (WebSockets) Add close connection message.
+
 ## 07/02/2021
 -   Add error codes to user endpoints.
 -   Change response of `/users/signin` and `/users/signup`.

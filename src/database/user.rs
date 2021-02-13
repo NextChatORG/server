@@ -129,7 +129,9 @@ impl User {
         if with_password {
             query.push_str("password, ");
         }
-        query.push_str("profile_image, online, last_online, created_at FROM users WHERE username = $1");
+        query.push_str(
+            "profile_image, online, last_online, created_at FROM users WHERE username = $1",
+        );
 
         let result = sqlx::query(&query).bind(username).fetch_one(client).await?;
 
