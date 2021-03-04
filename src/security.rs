@@ -1,16 +1,25 @@
+use argonautica::{Hasher, Verifier};
 use std::env;
 
-pub fn get_secret_key() -> String {
+fn get_secret_key() -> String {
     env::var("APP_SECRET_KEY").expect("Cannot get the `APP_SECRET_KEY` variable.")
 }
 
-pub fn encrypt_password(password: String) -> String {
-    let config = argon2::Config::default();
-    argon2::hash_encoded(password.as_bytes(), get_secret_key().as_bytes(), &config)
+pub fn encrypt_password(password: &str) -> String {
+    let mut hasher = Hasher::default();
+    hasher
+        .with_password(password)
+        .with_secret_key(get_secret_key())
+        .hash()
         .expect("Cannot encrypt the password.")
 }
 
-pub fn verify_password(password: String, password_hash: String) -> bool {
-    argon2::verify_encoded(&password_hash, password.as_bytes())
+pub fn verify_password(password: &str, password_hash: &str) -> bool {
+    let mut verifier = Verifier::default();
+    verifier
+        .with_hash(password_hash)
+        .with_password(password)
+        .with_secret_key(get_secret_key())
+        .verify()
         .expect("Cannot verify the password.")
 }

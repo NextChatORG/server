@@ -1,40 +1,42 @@
-mod connection;
 mod database;
-mod routes;
+mod handlers;
 mod security;
 
-use actix_web::{web::resource, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::env;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+#[tokio::main]
+async fn main() {
     // Read the .env file.
     dotenv().ok();
 
     // Get the database pool connection.
-    let client: PgPool = database::get_database_connection()
-        .await
-        .expect("Cannot get the database connection.");
+    let database_connection: PgPool = match database::get_database_connection().await {
+        Ok(connection) => {
+            println!("Database -> Connected!");
+            connection
+        }
+        Err(e) => {
+            eprintln!("failed to connect to the database - error: {:?}", e);
+            return;
+        }
+    };
 
     // Get the server host from the environment.
-    let host: String = env::var("API_HOST").unwrap_or(String::from("127.0.0.1"));
+    let host: Vec<u8> = env::var("API_HOST")
+        .unwrap_or_else(|_| String::from("127.0.0.1"))
+        .split('.')
+        .map(|x| x.parse::<u8>().unwrap_or_else(|_| 0))
+        .collect();
 
     // Get `API_PORT` from the environment variables.
     let port: u16 = env::var("API_PORT")
-        .unwrap_or(String::from("5000"))
+        .unwrap_or_else(|_| String::from("5000"))
         .parse()
-        .unwrap_or(5000);
+        .unwrap_or_else(|_| 5000);
 
-    // HTTP Server.
-    HttpServer::new(move || {
-        App::new()
-            .data(client.clone())
-            .service(resource("/ws/").to(routes::websocket))
-            .service(routes::users::scope())
-    })
-    .bind((host, port))?
-    .run()
-    .await
+    warp::serve(handlers::routes(&database_connection))
+        .run(([host[0], host[1], host[2], host[3]], port))
+        .await;
 }
