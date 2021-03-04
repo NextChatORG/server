@@ -10,6 +10,7 @@ This repository contains the source code of the server application for NextChat 
 
 ## Pre-requisites
 -   C++
+-   LLVM
 -   [RustLang](https://www.rust-lang.org)
 -   [PostgreSQL 9.6.20](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
 
