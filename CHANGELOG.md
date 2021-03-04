@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## Unreleased (MVP)
 
 ## 04/03/2021
+-   Update `online` and `last_online` when a user is connected or disconnected.
+-   Add `Storage` struct.
 -   Change everything to Tokio and Warp.
 
 ## 12/02/2021
@@ -14,7 +16,6 @@
 
 ## 05/02/2021
 -   Fix `/users/all` endpoint.
--   Change `argonautica` to `rust-argon2`.
 
 ### 04/02/2021
 -   Add `profile_image` column to users table.

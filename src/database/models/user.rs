@@ -1,8 +1,7 @@
-use crate::security;
+use crate::{database::get_now_time, security};
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgRow, Error, PgPool, Row};
-use std::time::SystemTime;
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -20,10 +19,7 @@ pub struct UserModel {
 
 impl UserModel {
     pub fn default() -> Self {
-        let now = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .expect("Cannot get timestamp.");
-        let now_time = NaiveDateTime::from_timestamp(now.as_secs() as i64, 0);
+        let now_time = get_now_time();
 
         Self {
             id: Uuid::new_v4(),
@@ -121,8 +117,16 @@ impl UserModel {
         self.online
     }
 
+    pub fn set_online(&mut self, online: bool) {
+        self.online = online;
+    }
+
     pub fn get_last_online(&self) -> NaiveDateTime {
         self.last_online
+    }
+
+    pub fn set_last_online(&mut self, last_online: NaiveDateTime) {
+        self.last_online = last_online;
     }
 
     pub fn get_created_at(&self) -> NaiveDateTime {
@@ -135,17 +139,5 @@ impl UserModel {
         }
 
         security::verify_password(&password, &self.password.clone().unwrap())
-    }
-
-    pub async fn _save(&self, client: &PgPool, key: &str, value: &str) -> Result<bool, Error> {
-        let result: u64 = sqlx::query("UPDATE FROM users SET $1 = $2 WHERE id = $3")
-            .bind(key)
-            .bind(value)
-            .bind(self.id)
-            .execute(client)
-            .await?
-            .rows_affected();
-
-        Ok(result > 0)
     }
 }

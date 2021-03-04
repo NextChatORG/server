@@ -1,7 +1,8 @@
 pub mod models;
 
+use chrono::NaiveDateTime;
 use sqlx::{Error, PgPool};
-use std::env;
+use std::{env, time::SystemTime};
 
 async fn check_if_table_exists(client: &PgPool, table_name: &str) -> Result<bool, Error> {
     let result: (bool,) =
@@ -32,4 +33,11 @@ pub async fn get_database_connection() -> Result<PgPool, Error> {
     }
 
     Ok(client)
+}
+
+pub fn get_now_time() -> NaiveDateTime {
+    let now = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("Cannot get timestamp.");
+    NaiveDateTime::from_timestamp(now.as_secs() as i64, 0)
 }
