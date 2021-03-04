@@ -96,7 +96,7 @@ impl UserModel {
     }
 
     pub fn get_id(&self) -> Uuid {
-        self.id.clone()
+        self.id
     }
 
     pub fn get_username(&self) -> String {
@@ -118,15 +118,15 @@ impl UserModel {
     }
 
     pub fn is_online(&self) -> bool {
-        self.online.clone()
+        self.online
     }
 
     pub fn get_last_online(&self) -> NaiveDateTime {
-        self.last_online.clone()
+        self.last_online
     }
 
     pub fn get_created_at(&self) -> NaiveDateTime {
-        self.created_at.clone()
+        self.created_at
     }
 
     pub fn verify_password(&self, password: String) -> bool {

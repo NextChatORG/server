@@ -5,14 +5,21 @@ use sqlx::PgPool;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use uuid::Uuid;
-use warp::{Filter, Rejection, Reply, ws::{Message, WebSocket, Ws}};
+use warp::{
+    ws::{Message, WebSocket, Ws},
+    Filter, Rejection, Reply,
+};
 
 async fn on_user_disconnected(user_id: &Uuid, _client: &PgPool) {
     println!("User disconnected: {}", user_id);
 }
 
 async fn on_user_message(user_id: &Uuid, message: Message, _client: &PgPool) {
-    let message = if let Ok(s) = message.to_str() { s } else { return; };
+    let message = if let Ok(s) = message.to_str() {
+        s
+    } else {
+        return;
+    };
     println!("User ID: {} - Message: {}", user_id, message);
 }
 

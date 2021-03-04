@@ -9,6 +9,5 @@ pub fn v1_path_prefix() -> BoxedFilter<()> {
 }
 
 pub fn routes(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    users::routes(client)
-        .or(websockets::routes(client))
+    users::routes(client).or(websockets::routes(client))
 }

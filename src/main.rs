@@ -27,14 +27,14 @@ async fn main() {
     let host: Vec<u8> = env::var("API_HOST")
         .unwrap_or_else(|_| String::from("127.0.0.1"))
         .split('.')
-        .map(|x| x.parse::<u8>().unwrap_or_else(|_| 0))
+        .map(|x| x.parse::<u8>().unwrap_or(0))
         .collect();
 
     // Get `API_PORT` from the environment variables.
     let port: u16 = env::var("API_PORT")
         .unwrap_or_else(|_| String::from("5000"))
         .parse()
-        .unwrap_or_else(|_| 5000);
+        .unwrap_or(5000);
 
     warp::serve(handlers::routes(&database_connection))
         .run(([host[0], host[1], host[2], host[3]], port))
