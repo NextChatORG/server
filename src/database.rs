@@ -1,13 +1,12 @@
-mod user;
-pub use user::*;
+pub mod models;
 
 use sqlx::{Error, PgPool};
 use std::env;
 
-pub async fn table_exists(client: &PgPool, table_name: &str) -> Result<bool, Error> {
+async fn check_if_table_exists(client: &PgPool, table_name: &str) -> Result<bool, Error> {
     let result: (bool,) =
         sqlx::query_as("SELECT EXISTS (SELECT FROM pg_tables WHERE tablename = $1)")
-            .bind(&table_name)
+            .bind(table_name)
             .fetch_one(client)
             .await?;
 
@@ -24,7 +23,7 @@ pub async fn get_database_connection() -> Result<PgPool, Error> {
         .execute(&client)
         .await?;
 
-    let users_table = table_exists(&client, "users").await?;
+    let users_table = check_if_table_exists(&client, "users").await?;
     if !users_table {
         sqlx::query(include_str!("./database/sqls/users_table.sql"))
             .execute(&client)
