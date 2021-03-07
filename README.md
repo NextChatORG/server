@@ -73,10 +73,39 @@ Response example:
     {
         "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
         "username": "danielsolartech",
-        "password": null,
+        "profile_image": "",
         "online": false,
         "last_online": "2021-02-02T18:27:08",
         "created_at": "2021-02-02T18:27:08"
+    }
+]
+```
+
+-   _GET_ `/users/search/{text_to_search}`
+-   _GET_ `/users/search/{text_to_search}?skip={number}`
+-   _GET_ `/users/search/{text_to_search}?take={number}`
+-   _GET_ `/users/search/{text_to_search}?skip={number}&take={number}`
+
+Default values:
+```json
+{
+    "skip": 0,
+    "take": 10
+}
+```
+
+Error codes:
+```
+0 -> Cannot get the users from the table.
+```
+
+Response example:
+```json
+[
+    {
+        "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
+        "username": "danielsolartech",
+        "profile_image": ""
     }
 ]
 ```
@@ -94,7 +123,7 @@ Response example:
 {
     "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
     "username": "danielsolartech",
-    "password": null,
+    "profile_image": "",
     "online": false,
     "last_online": "2021-02-02T18:27:08",
     "created_at": "2021-02-02T18:27:08"
@@ -114,7 +143,7 @@ Response example:
 {
     "id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
     "username": "danielsolartech",
-    "password": null,
+    "profile_image": "",
     "online": false,
     "last_online": "2021-02-02T18:27:08",
     "created_at": "2021-02-02T18:27:08"

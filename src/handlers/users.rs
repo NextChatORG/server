@@ -23,8 +23,8 @@ fn list(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
         match sqlx::query(
             "SELECT id, username, profile_image, online, last_online, created_at FROM users LIMIT $1 OFFSET $2",
         )
-        .bind(query.take.unwrap_or_else(|| 10))
-        .bind(query.skip.unwrap_or_else(|| 0))
+        .bind(query.take.unwrap_or(10))
+        .bind(query.skip.unwrap_or(0))
         .fetch_all(&client)
         .await
         {
@@ -50,17 +50,75 @@ fn list(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
 }
 
 // Error codes:
+// 0 -> Cannot get the users.
+fn search(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
+    #[derive(Deserialize)]
+    struct Query {
+        pub skip: Option<i64>,
+        pub take: Option<i64>,
+    }
+
+    async fn handler(
+        text_to_search: String,
+        query: Query,
+        client: PgPool,
+    ) -> Result<impl Reply, Infallible> {
+        let sql = format!("SELECT id, username, profile_image FROM users WHERE username LIKE '{}%' LIMIT $1 OFFSET $2", text_to_search);
+        match sqlx::query(&sql)
+            .bind(query.take.unwrap_or(10))
+            .bind(query.skip.unwrap_or(0))
+            .fetch_all(&client)
+            .await
+        {
+            Err(_) => {
+                Ok(ResponseBody::new(400, Error::new_str(0, "Cannot get the users.")).to_reply())
+            }
+            Ok(users) => {
+                #[derive(Serialize)]
+                struct Response {
+                    pub id: Uuid,
+                    pub username: String,
+                    pub profile_image: String,
+                }
+
+                let users: Vec<Response> = users
+                    .iter()
+                    .map(|user| Response {
+                        id: user.try_get("id").expect("Cannot parse the user id."),
+                        username: user
+                            .try_get("username")
+                            .expect("Cannot parse the username."),
+                        profile_image: user
+                            .try_get("profile_image")
+                            .expect("Cannot parse the user profile image."),
+                    })
+                    .collect();
+
+                Ok(ResponseBody::new(if users.is_empty() { 204 } else { 200 }, users).to_reply())
+            }
+        }
+    }
+
+    warp::get()
+        .and(users_path_prefix())
+        .and(warp::path!("search" / String))
+        .and(warp::query::<Query>())
+        .and(with_client(client.clone()))
+        .and_then(handler)
+}
+
+// Error codes:
 // 0 -> Username and id in the query.
 // 1 -> User id or username does not exist.
 // 2 -> Invalid query.
 fn find(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     #[derive(Deserialize)]
-    struct FindQuery {
+    struct Query {
         pub id: Option<Uuid>,
         pub username: Option<String>,
     }
 
-    async fn handler(query: FindQuery, client: PgPool) -> Result<impl Reply, Infallible> {
+    async fn handler(query: Query, client: PgPool) -> Result<impl Reply, Infallible> {
         if query.id.is_some() && query.username.is_some() {
             Ok(ResponseBody::new(
                 400,
@@ -99,7 +157,7 @@ fn find(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
     warp::get()
         .and(users_path_prefix())
         .and(warp::path("find"))
-        .and(warp::query::<FindQuery>())
+        .and(warp::query::<Query>())
         .and(with_client(client.clone()))
         .and_then(handler)
 }
@@ -267,6 +325,7 @@ fn signin(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejectio
 
 pub fn routes(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     list(client)
+        .or(search(client))
         .or(find(client))
         .or(signup(client))
         .or(signin(client))

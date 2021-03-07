@@ -3,8 +3,9 @@
 ## Unreleased (MVP)
 
 ## 07/03/2021
+-   Add `/search` endpoint.
 -   Add `take` and `skip` query params to `/users/all` route.
--   Add `version_checker` route.
+-   Add `/version_checker` endpoint.
 -   Change `ResponseBody` struct.
 -   Remove password from `UserModel` JSON serialize.
 -   Remove `/v1/` from routes.
