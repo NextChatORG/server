@@ -1,7 +1,5 @@
-use crate::{
-    database::models::UserModel,
-    handlers::{with_client, Error, ResponseBody},
-};
+use super::{with_client, Error, ResponseBody};
+use crate::database::models::UserModel;
 use serde::{Deserialize, Serialize};
 use sqlx::{PgPool, Row};
 use std::convert::Infallible;
@@ -38,7 +36,6 @@ fn list(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
     }
 
     warp::get()
-        .and(super::v1_path_prefix())
         .and(users_path_prefix())
         .and(warp::path("all"))
         .and(with_client(client.clone()))
@@ -93,7 +90,6 @@ fn find(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
     }
 
     warp::get()
-        .and(super::v1_path_prefix())
         .and(users_path_prefix())
         .and(warp::path("find"))
         .and(warp::query::<FindQuery>())
@@ -204,7 +200,6 @@ fn signup(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejectio
     }
 
     warp::post()
-        .and(super::v1_path_prefix())
         .and(users_path_prefix())
         .and(warp::path("signup"))
         .and(warp::body::json::<SignUpAndSigInBody>())
@@ -262,7 +257,6 @@ fn signin(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejectio
     }
 
     warp::post()
-        .and(super::v1_path_prefix())
         .and(users_path_prefix())
         .and(warp::path("signin"))
         .and(warp::body::json::<SignUpAndSigInBody>())

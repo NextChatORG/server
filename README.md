@@ -25,10 +25,10 @@ Error response example (_400 Bad Request_):
 ```
 
 ### WebSockets
--   _WebSocket_ `/v1/ws/?user_id={id}`
+-   _WebSocket_ `/ws/?user_id={id}`
 
 ### Users
--   _GET_ `/v1/users/all`
+-   _GET_ `/users/all`
 
 Error codes:
 ```
@@ -49,7 +49,7 @@ Response example:
 ]
 ```
 
--   _GET_ `/v1/users/find?id={id}`
+-   _GET_ `/users/find?id={id}`
 
 Error codes:
 ```
@@ -69,7 +69,7 @@ Response example:
 }
 ```
 
--   _GET_ `/v1/users/find?username={username}`
+-   _GET_ `/users/find?username={username}`
 
 Error codes:
 ```
@@ -89,7 +89,7 @@ Response example:
 }
 ```
 
--   _POST_ `/v1/users/signup`
+-   _POST_ `/users/signup`
 
 Error codes:
 ```
@@ -118,7 +118,7 @@ Response example:
 }
 ```
 
--   _POST_ `/v1/users/signin`
+-   _POST_ `/users/signin`
 
 Error codes:
 ```

@@ -1,12 +1,20 @@
-mod v1;
+mod users;
+mod websockets;
 
 use serde::Serialize;
 use sqlx::PgPool;
 use std::convert::Infallible;
 use warp::{http::StatusCode, reply, Filter, Rejection, Reply};
+use websockets::{Storage, StorageType};
 
 pub fn with_client(client: PgPool) -> impl Filter<Extract = (PgPool,), Error = Infallible> + Clone {
     warp::any().map(move || client.clone())
+}
+
+pub fn with_storage(
+    storage: StorageType,
+) -> impl Filter<Extract = (StorageType,), Error = Infallible> + Clone {
+    warp::any().map(move || storage.clone())
 }
 
 #[derive(Serialize)]
@@ -48,5 +56,7 @@ impl<T: Serialize> ResponseBody<T> {
 }
 
 pub fn routes(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    v1::routes(client)
+    let storage: StorageType = Storage::default();
+
+    users::routes(client).or(websockets::routes(client, &storage))
 }

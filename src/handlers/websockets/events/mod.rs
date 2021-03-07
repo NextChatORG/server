@@ -1,7 +1,5 @@
-use crate::{
-    database::{get_now_time, models::UserModel},
-    handlers::v1::websockets::StorageType,
-};
+use super::StorageType;
+use crate::database::{get_now_time, models::UserModel};
 use futures::{FutureExt, StreamExt};
 use sqlx::PgPool;
 use tokio::sync::mpsc;
