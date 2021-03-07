@@ -1,4 +1,5 @@
 mod users;
+mod version_checker;
 mod websockets;
 
 use serde::Serialize;
@@ -33,30 +34,33 @@ impl Error {
     }
 }
 
-pub enum ResponseBody<T: Serialize> {
-    Error(Error),
-    Success(T),
+pub struct ResponseBody<T: Serialize> {
+    status_code: u16,
+    json: T,
 }
 
 impl<T: Serialize> ResponseBody<T> {
-    pub fn new_error(error: Error) -> Self {
-        Self::Error(error)
+    pub fn new(status_code: u16, json: T) -> Self {
+        Self { status_code, json }
     }
 
     pub fn new_success(json: T) -> Self {
-        Self::Success(json)
+        Self {
+            status_code: 200,
+            json,
+        }
     }
 
     pub fn to_reply(&self) -> reply::WithStatus<warp::reply::Json> {
-        match self {
-            Self::Error(error) => reply::with_status(reply::json(error), StatusCode::BAD_REQUEST),
-            Self::Success(success) => reply::with_status(reply::json(success), StatusCode::OK),
-        }
+        reply::with_status(
+            reply::json(&self.json),
+            StatusCode::from_u16(self.status_code).expect("Cannot parse the status code."),
+        )
     }
 }
 
 pub fn routes(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     let storage: StorageType = Storage::default();
 
-    users::routes(client).or(websockets::routes(client, &storage))
+    users::routes(client).or(version_checker::routes().or(websockets::routes(client, &storage)))
 }

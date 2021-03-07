@@ -1,6 +1,7 @@
 mod database;
 mod handlers;
 mod security;
+mod version;
 
 use dotenv::dotenv;
 use sqlx::PgPool;

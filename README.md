@@ -24,6 +24,27 @@ Error response example (_400 Bad Request_):
 }
 ```
 
+### Version Checker
+-   _PATCH_ `/version_checker?version={version}`
+
+See [versions.md](./versions.md) for more information about the available versions.
+
+Response examples:
+```json
+{
+    "_url": "/version_checker?version=0.0.1",
+    "required_update": true,
+    "to": "1.0.0-alpha1"
+}
+```
+```json
+{
+    "_url": "/version_checker?version=1.0.0-alpha1",
+    "required_update": false,
+    "to": null
+}
+```
+
 ### WebSockets
 -   _WebSocket_ `/ws/?user_id={id}`
 

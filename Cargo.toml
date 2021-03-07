@@ -9,6 +9,7 @@ argonautica = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15"
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
+semver = "0.11"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlx = { version = "0.5.1", features = ["chrono", "json", "postgres", "runtime-tokio-rustls", "uuid"] }

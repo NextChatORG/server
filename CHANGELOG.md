@@ -3,6 +3,8 @@
 ## Unreleased (MVP)
 
 ## 07/03/2021
+-   Add `version_checker` route.
+-   Change `ResponseBody` struct.
 -   Remove password from `UserModel` JSON serialize.
 -   Remove `/v1/` from routes.
 
