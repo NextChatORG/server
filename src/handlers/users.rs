@@ -13,10 +13,18 @@ fn users_path_prefix() -> BoxedFilter<()> {
 // Error codes:
 // 0 -> Cannot get the users.
 fn list(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    async fn handler(client: PgPool) -> Result<impl Reply, Infallible> {
+    #[derive(Deserialize)]
+    struct Query {
+        pub skip: Option<i64>,
+        pub take: Option<i64>,
+    }
+
+    async fn handler(query: Query, client: PgPool) -> Result<impl Reply, Infallible> {
         match sqlx::query(
-            "SELECT id, username, profile_image, online, last_online, created_at FROM users",
+            "SELECT id, username, profile_image, online, last_online, created_at FROM users LIMIT $1 OFFSET $2",
         )
+        .bind(query.take.unwrap_or_else(|| 10))
+        .bind(query.skip.unwrap_or_else(|| 0))
         .fetch_all(&client)
         .await
         {
@@ -36,6 +44,7 @@ fn list(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection>
     warp::get()
         .and(users_path_prefix())
         .and(warp::path("all"))
+        .and(warp::query::<Query>())
         .and(with_client(client.clone()))
         .and_then(handler)
 }

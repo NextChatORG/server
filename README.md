@@ -50,6 +50,17 @@ Response examples:
 
 ### Users
 -   _GET_ `/users/all`
+-   _GET_ `/users/all?skip={number}`
+-   _GET_ `/users/all?take={number}`
+-   _GET_ `/users/all?skip={number}&take={number}`
+
+Default values:
+```json
+{
+    "skip": 0,
+    "take": 10
+}
+```
 
 Error codes:
 ```
