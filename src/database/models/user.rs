@@ -8,6 +8,8 @@ use uuid::Uuid;
 pub struct UserModel {
     id: Uuid,
     username: String,
+
+    #[serde(skip_serializing)]
     password: Option<String>,
 
     profile_image: String,
