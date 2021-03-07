@@ -2,6 +2,10 @@
 
 ## Unreleased (MVP)
 
+## 07/03/2021
+-   Remove password from `UserModel` JSON serialize.
+-   Remove `/v1/` from routes.
+
 ## 04/03/2021
 -   Update `online` and `last_online` when a user is connected or disconnected.
 -   Add `Storage` struct.
