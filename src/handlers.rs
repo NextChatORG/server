@@ -1,3 +1,4 @@
+mod friends;
 mod users;
 mod version_checker;
 mod websockets;
@@ -62,7 +63,8 @@ impl<T: Serialize> ResponseBody<T> {
 pub fn routes(client: &PgPool) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     let storage: StorageType = Storage::default();
 
-    users::routes(client)
-        .or(version_checker::routes())
+    version_checker::routes()
+        .or(users::routes(client))
+        .or(friends::routes(client))
         .or(websockets::routes(client, &storage))
 }

@@ -24,12 +24,16 @@ pub async fn get_database_connection() -> Result<PgPool, Error> {
         .execute(&client)
         .await?;
 
-    let users_table = check_if_table_exists(&client, "users").await?;
-    if !users_table {
-        sqlx::query(include_str!("./database/sqls/users_table.sql"))
-            .execute(&client)
-            .await?;
-        println!("Users table created.");
+    let tables = [
+        ("users", include_str!("./database/sqls/users.sql")),
+        ("friends", include_str!("./database/sqls/friends.sql")),
+    ];
+
+    for (table, sql) in tables.iter() {
+        if !check_if_table_exists(&client, table).await? {
+            sqlx::query(sql).execute(&client).await?;
+            println!("{} table created.", table);
+        }
     }
 
     Ok(client)

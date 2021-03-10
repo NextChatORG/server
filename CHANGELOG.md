@@ -2,6 +2,12 @@
 
 ## Unreleased (MVP)
 
+## 10/03/2021
+-   Fix `length` bug in `API_HOST`.
+-   Add `friends` sql and `are_friends` endpoint.
+-   Add `FriendModel`.
+-   Create `endpoints.md` file.
+
 ## 07/03/2021
 -   Add `/search` endpoint.
 -   Add `take` and `skip` query params to `/users/all` route.

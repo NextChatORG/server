@@ -1,3 +1,5 @@
+/// This file initialize the database connection and the HTTP server.
+
 mod database;
 mod handlers;
 mod security;
@@ -30,6 +32,11 @@ async fn main() {
         .split('.')
         .map(|x| x.parse::<u8>().unwrap_or(0))
         .collect();
+
+    if host.len() != 4 {
+        println!("Error -> `{:?}` is not a valid host.", host);
+        return;
+    }
 
     // Get `API_PORT` from the environment variables.
     let port: u16 = env::var("API_PORT")
