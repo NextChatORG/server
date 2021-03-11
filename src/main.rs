@@ -1,5 +1,4 @@
 /// This file initialize the database connection and the HTTP server.
-
 mod database;
 mod handlers;
 mod security;
