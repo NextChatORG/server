@@ -191,7 +191,7 @@ Response example:
 ```
 
 ## Friends
--   _GET_ `/friends/are_friends/{user_one_id}/{user_two_id}`
+-   _GET_ `/friends/{user_one_id}/{user_two_id}`
 
 Response example:
 ```json
@@ -199,4 +199,16 @@ Response example:
     "are_friends": false,
     "since": null
 }
+```
+
+-   _GET_ `/friends/get-of/{user_id}`
+
+Response example:
+```json
+[
+    {
+        "user_id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
+        "since": "2021-02-02T18:27:08"
+    }
+]
 ```
