@@ -3,9 +3,9 @@
 ## Unreleased (MVP)
 
 ## 10/03/2021
+-   Add `/friends/get-of/:id` endpoint.
 -   Fix `length` bug in `API_HOST`.
--   Add `friends` sql and `are_friends` endpoint.
--   Add `FriendModel`.
+-   Add `friends` sql and `/friends/:id/:id` endpoint.
 -   Create `endpoints.md` file.
 
 ## 07/03/2021
