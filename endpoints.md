@@ -9,28 +9,28 @@ Error response example (_400 Bad Request_):
 ```
 
 ## Version Checker
--   _PATCH_ `/version_checker?version={version}`
+-   _PATCH_ `/version_checker/{version}`
 
 See [versions.md](./versions.md) for more information about the available versions.
 
 Response examples:
 ```json
 {
-    "_url": "/version_checker?version=0.0.1",
-    "required_update": true,
-    "to": "1.0.0-alpha1"
+    "_url": "/version_checker/0.0.1",
+    "is_deprecated": true,
+    "last_version": "0.1.0-alpha1"
 }
 ```
 ```json
 {
-    "_url": "/version_checker?version=1.0.0-alpha1",
+    "_url": "/version_checker/0.1.0-alpha1",
     "required_update": false,
     "to": null
 }
 ```
 
 ## WebSockets
--   _WebSocket_ `/ws/?user_id={id}`
+-   _WebSocket_ `/connection/?user_id={id}`
 
 ## Users
 -   _GET_ `/users/all`
@@ -199,16 +199,4 @@ Response example:
     "are_friends": false,
     "since": null
 }
-```
-
--   _GET_ `/friends/get-of/{user_id}`
-
-Response example:
-```json
-[
-    {
-        "user_id": "5959ad9c-598e-4deb-bcbe-053c1f73b400",
-        "since": "2021-02-02T18:27:08"
-    }
-]
 ```

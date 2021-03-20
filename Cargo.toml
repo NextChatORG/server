@@ -1,12 +1,14 @@
 [package]
 name = "nextchat-server"
-version = "0.1.0"
+version = "0.1.0-alpha1"
 authors = ["NextChat contributors"]
 edition = "2018"
 
 [dependencies]
+anyhow = "1"
 argonautica = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
+colored = "2"
 dotenv = "0.15"
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
 semver = "0.11"

@@ -1,14 +1,19 @@
 # Changelog
 
-## Unreleased (MVP)
+## Unreleased (0.1.0-alpha1)
 
-## 10/03/2021
+### 20/03/2021
+-   Code refactor to a scalable structure.
+-   Add code documentation.
+-   Add `colored` and `anyhow` crates.
+
+### 10/03/2021
 -   Add `/friends/get-of/:id` endpoint.
 -   Fix `length` bug in `API_HOST`.
 -   Add `friends` sql and `/friends/:id/:id` endpoint.
 -   Create `endpoints.md` file.
 
-## 07/03/2021
+### 07/03/2021
 -   Add `/search` endpoint.
 -   Add `take` and `skip` query params to `/users/all` route.
 -   Add `/version_checker` endpoint.
@@ -16,19 +21,19 @@
 -   Remove password from `UserModel` JSON serialize.
 -   Remove `/v1/` from routes.
 
-## 04/03/2021
+### 04/03/2021
 -   Update `online` and `last_online` when a user is connected or disconnected.
 -   Add `Storage` struct.
 -   Change everything to Tokio and Warp.
 
-## 12/02/2021
+### 12/02/2021
 -   (WebSockets) Add close connection message.
 
-## 07/02/2021
+### 07/02/2021
 -   Add error codes to user endpoints.
 -   Change response of `/users/signin` and `/users/signup`.
 
-## 05/02/2021
+### 05/02/2021
 -   Fix `/users/all` endpoint.
 
 ### 04/02/2021
