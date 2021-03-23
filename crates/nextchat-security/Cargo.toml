@@ -7,4 +7,3 @@ edition = "2018"
 
 [dependencies]
 argonautica = "0.2"
-colored = "2"
