@@ -9,6 +9,7 @@ pub use connection::Connection;
 pub use incoming::run_event;
 pub use storage::{Storage, StorageType};
 
+#[derive(Debug)]
 pub struct CommunicationMessage {
     name: String,
     arguments: Vec<String>,
@@ -16,10 +17,10 @@ pub struct CommunicationMessage {
 
 impl CommunicationMessage {
     /// Parse a string like `/{name} {argument1} {argument2}` to a CommunicationMessage struct.
-    pub fn from_string(message: String) -> anyhow::Result<CommunicationMessage> {
+    pub fn from_string(message: String) -> Result<Self, String> {
         // Check if the messages does not start with a slash (`/`).
         if !message.starts_with("/") {
-            return Err(anyhow::Error::msg(
+            return Err(String::from(
                 "The message format is incorrect. `/{name} {argument1} {argument2}`",
             ));
         }

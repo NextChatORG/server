@@ -12,3 +12,6 @@ nextchat-database = { path = "../nextchat-database/", version = "0.1.0-alpha1" }
 nextchat-utils = { path = "../nextchat-utils/", version = "0.1.0-alpha1" }
 tokio = { version = "1", default-features = false, features = ["sync"] }
 warp = { version = "0.3", default-features = false, features = ["websocket"] }
+
+[dev-dependencies]
+tokio = { version = "1", default-features = false, features = ["macros"] }

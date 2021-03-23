@@ -22,7 +22,16 @@ impl Storage {
     ///
     /// # Example
     /// ```rust
-    /// let storage: StorageType = Storage::default();
+    /// use nextchat_communication::{Storage, StorageType};
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let storage: StorageType = Storage::default();
+    ///     let storage = storage.read().await;
+    ///
+    ///     let last_version = storage.get_versions().get_last_version();
+    ///     assert!(!last_version.is_deprecated());
+    /// }
     /// ```
     pub fn default() -> StorageType {
         Arc::new(RwLock::new(Self {
