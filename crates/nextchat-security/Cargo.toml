@@ -1,0 +1,10 @@
+[package]
+name = "nextchat-security"
+version = "0.1.0-alpha1"
+license = "GPL-2.0"
+authors = ["NextChat contributors <contact@nextchat.org>"]
+edition = "2018"
+
+[dependencies]
+argonautica = "0.2"
+colored = "2"

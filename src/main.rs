@@ -1,17 +1,11 @@
-//! NextChat Server main module.
+//! NextChat main module.
 //!
 //! This module contains the database connection and server initializations.
-
-mod controllers;
-mod core;
-mod models;
-mod services;
 
 use std::env;
 
 use colored::*;
 use dotenv::dotenv;
-use sqlx::PgPool;
 
 #[tokio::main]
 async fn main() {
@@ -19,7 +13,7 @@ async fn main() {
     dotenv().ok();
 
     // Get the postgres pool connection.
-    let database_connection: PgPool = match core::database::get_pool_connection().await {
+    let database_connection = match nextchat_database::get_client().await {
         Ok(connection) => {
             println!("Database {}", "Connected!".green());
             connection
@@ -52,7 +46,11 @@ async fn main() {
         .parse()
         .unwrap_or(5000);
 
-    warp::serve(controllers::routes(&database_connection))
-        .run(([host[0], host[1], host[2], host[3]], port))
-        .await;
+    // Initialize the NextChat Server.
+    nextchat_server::run(
+        &database_connection,
+        [host[0], host[1], host[2], host[3]],
+        port,
+    )
+    .await;
 }

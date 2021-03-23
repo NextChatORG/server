@@ -1,0 +1,13 @@
+[package]
+name = "nextchat-database"
+version = "0.1.0-alpha1"
+license = "GPL-2.0"
+authors = ["NextChat contributors <contact@nextchat.org>"]
+edition = "2018"
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+sqlx = { version = "0.5.1", features = ["chrono", "json", "postgres", "runtime-tokio-rustls", "uuid"] }
+uuid = { version = "0.8", default-features = false, features = ["serde", "v4"] }

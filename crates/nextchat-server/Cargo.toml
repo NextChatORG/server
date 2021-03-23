@@ -1,0 +1,17 @@
+[package]
+name = "nextchat-server"
+version = "0.1.0-alpha1"
+license = "GPL-2.0"
+authors = ["NextChat contributors <contact@nextchat.org>"]
+edition = "2018"
+
+[dependencies]
+futures = { version = "0.3", default-features = false, features = ["alloc"] }
+nextchat-communication = { path = "../nextchat-communication/", version = "0.1.0-alpha1" }
+nextchat-database = { path = "../nextchat-database/", version = "0.1.0-alpha1" }
+nextchat-security = { path = "../nextchat-security/", version = "0.1.0-alpha1" }
+nextchat-utils = { path = "../nextchat-utils/", version = "0.1.0-alpha1" }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", default-features = false, features = ["sync"] }
+tokio-stream = "0.1.1"
+warp = "0.3"

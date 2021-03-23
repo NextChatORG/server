@@ -1,21 +1,24 @@
 [package]
-name = "nextchat-server"
+name = "nextchat"
 version = "0.1.0-alpha1"
-authors = ["NextChat contributors"]
+readme = "README.md"
+license = "GPL-2.0"
+authors = ["NextChat contributors <contact@nextchat.org>"]
 edition = "2018"
 
+[workspace]
+members = [
+    "crates/nextchat-communication/",
+    "crates/nextchat-database/",
+    "crates/nextchat-security/",
+    "crates/nextchat-server/",
+    "crates/nextchat-utils/"
+]
+
 [dependencies]
-anyhow = "1"
-argonautica = "0.2"
-chrono = { version = "0.4", features = ["serde"] }
 colored = "2"
 dotenv = "0.15"
-futures = { version = "0.3", default-features = false, features = ["alloc"] }
-semver = "0.11"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-sqlx = { version = "0.5.1", features = ["chrono", "json", "postgres", "runtime-tokio-rustls", "uuid"] }
-tokio = { version = "1", features = ["full"] }
-tokio-stream = "0.1.1"
-uuid = { version = "0.8", features = ["serde", "v4"] }
-warp = "0.3"
+nextchat-communication = { path = "./crates/nextchat-communication/", version = "0.1.0-alpha1" }
+nextchat-database = { path = "./crates/nextchat-database/", version = "0.1.0-alpha1" }
+nextchat-server = { path = "./crates/nextchat-server/", version = "0.1.0-alpha1" }
+tokio = { version = "1", features = ["macros"] }
