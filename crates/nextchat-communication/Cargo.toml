@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1"
+async-trait = "0.1.48"
 nextchat-database = { path = "../nextchat-database/", version = "0.1.0-alpha1" }
 nextchat-utils = { path = "../nextchat-utils/", version = "0.1.0-alpha1" }
 tokio = { version = "1", default-features = false, features = ["sync"] }

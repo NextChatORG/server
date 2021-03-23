@@ -2,12 +2,14 @@
 
 mod friend_request;
 
+use async_trait::async_trait;
 use nextchat_database::Client;
 
 use super::{CommunicationMessage, Connection, StorageType};
 
+#[async_trait]
 pub trait PacketEvent {
-    fn run(
+    async fn run(
         connection: &Connection,
         message: &CommunicationMessage,
         client: &Client,
@@ -15,7 +17,7 @@ pub trait PacketEvent {
     );
 }
 
-pub fn run_event(
+pub async fn run_event(
     connection: &Connection,
     message: &CommunicationMessage,
     client: &Client,
@@ -23,7 +25,7 @@ pub fn run_event(
 ) {
     match message.get_name().as_str() {
         "friend_request" => {
-            friend_request::FriendRequestEvent::run(connection, message, client, storage)
+            friend_request::FriendRequestEvent::run(connection, message, client, storage).await
         }
         _ => {
             println!("Unknown event: {}", message.to_string());

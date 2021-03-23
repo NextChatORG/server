@@ -29,7 +29,7 @@ async fn on_new_message(
         .expect("Cannot parse the message string to a communication message.");
 
     // Run a event.
-    nextchat_communication::run_event(connection, &cmessage, client, storage);
+    nextchat_communication::run_event(connection, &cmessage, client, storage).await;
 }
 
 /// Remove a connection from the storage.
