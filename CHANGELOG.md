@@ -3,6 +3,7 @@
 ## Unreleased (0.1.0-alpha1)
 
 ### 23/03/2021
+-   Add unit tests.
 -   Add `async-trait` for incoming events (NextChat Communication).
 
 ### 22/03/2021
