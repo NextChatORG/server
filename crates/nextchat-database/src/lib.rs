@@ -14,24 +14,33 @@ pub type Client = sqlx::PgPool;
 ///
 /// # Example
 /// ```rust
-/// let database_connection: Client = match get_client() {
-///     Ok(db) => db,
-///     Err(e) => {
-///         eprintln!("Database connection error: {:?}", e);
-///         return;
-///     },
+/// use std::env;
+///
+/// use nextchat_database::{Client, get_client};
+///
+/// #[tokio::main]
+/// async fn main() {
+///     env::set_var("DATABASE_URL", "postgres://postgres:password@localhost/nextchat");
+///
+///     let _client: Client = match get_client().await {
+///         Ok(db) => db,
+///         Err(e) => {
+///             assert_eq!(format!("{:?}", e), String::from("PoolTimedOut"));
+///             return;
+///         },
+///     };
+///
+///     assert!(true);
 /// }
 /// ```
 ///
 /// See [https://docs.rs/sqlx/0.5.1/sqlx/type.PgPool.html](https://docs.rs/sqlx/0.5.1/sqlx/type.PgPool.html)
 /// for more information.
-pub async fn get_client() -> anyhow::Result<Client> {
+pub async fn get_client() -> Result<Client, Error> {
     let database_url: String = match env::var("DATABASE_URL") {
         Ok(url) => url,
         Err(_) => {
-            return Err(anyhow::Error::msg(
-                "Cannot read `DATABASE_URL` from environment variables.",
-            ));
+            panic!("Database Error -> Cannot read `DATABASE_URL` from environment variables.");
         }
     };
 

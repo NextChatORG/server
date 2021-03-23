@@ -1085,10 +1085,10 @@ dependencies = [
 name = "nextchat-database"
 version = "0.1.0-alpha1"
 dependencies = [
- "anyhow",
  "chrono",
  "serde",
  "sqlx",
+ "tokio",
  "uuid",
 ]
 
