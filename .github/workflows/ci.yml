@@ -31,4 +31,7 @@ jobs:
         run: cargo clippy --all-targets --all-features --all
 
       - name: Run tests
+        env:
+          APP_SECRET_KEY: NextChatORG
+          DATABASE_URL: postgres://postgres:password@localhost/nextchat
         run: cargo test --workspace
