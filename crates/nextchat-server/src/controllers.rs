@@ -15,13 +15,45 @@ use warp::{Filter, Rejection, Reply};
 ///
 /// # Example
 /// ```rust
-/// let database_connection = nextchat_database::get_client().unwrap();
+/// use std::{convert::Infallible, env};
 ///
-/// async fn handler(client: Client) { }
+/// use nextchat_database::{Client, get_client, query};
+/// use nextchat_server::{Response, with_client};
+/// use serde::Serialize;
+/// use warp::{Filter, Reply};
 ///
-/// let route = warp::path("testing")
-///     .and(with_client(database_connection))
-///     .and_then(handler);
+/// #[tokio::main]
+/// async fn main() {
+///     env::set_var("DATABASE_URL", "postgres://postgres:password@localhost/nextchat");
+///
+///     let database_connection: Client = match get_client().await {
+///         Ok(db) => db,
+///         Err(e) => {
+///             eprintln!("Database Error: {:?}", e);
+///             return;
+///         },
+///     };
+///
+///     async fn handler(client: Client) -> Result<impl Reply, Infallible> {
+///         #[derive(Serialize)]
+///         struct ResponseData {
+///             updated: bool,
+///         }
+///
+///         let affected = query("UPDATE FROM users SET online = false WHERE username = 'NextChat'")
+///             .execute(&client)
+///             .await
+///             .expect("Cannot execute the query.")
+///             .rows_affected();
+///
+///         Ok(Response::new_success(ResponseData { updated: affected != 0 }).to_reply())
+///     }
+///
+///     let route = warp::get()
+///         .and(warp::path("testing"))
+///         .and(with_client(database_connection))
+///         .and_then(handler);
+/// }
 /// ```
 pub fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = Infallible> + Clone {
     warp::any().map(move || client.clone())
@@ -31,16 +63,35 @@ pub fn with_client(client: Client) -> impl Filter<Extract = (Client,), Error = I
 ///
 /// # Example
 /// ```rust
-/// let storage: StorageType = Storage::default();
+/// use std::convert::Infallible;
 ///
-/// async fn handler(storage: StorageType) {
-///     let mut storage = storage.write().await;
-///     storage.connections.insert(user_id, connection);
+/// use nextchat_communication::{Storage, StorageType};
+/// use nextchat_server::{Response, with_storage};
+/// use serde::Serialize;
+/// use warp::{Filter, Reply};
+///
+/// fn main() {
+///     let storage: StorageType = Storage::default();
+///
+///     async fn handler(storage: StorageType) -> Result<impl Reply, Infallible> {
+///         let storage = storage.read().await;
+///         let last_version = storage.get_versions().get_last_version();
+///
+///         #[derive(Serialize)]
+///         struct ResponseData {
+///             pub version: String,
+///         }
+///
+///         Ok(Response::new_success(ResponseData {
+///             version: last_version.get_version().to_string(),
+///         }).to_reply())
+///     }
+///
+///     let route = warp::get()
+///         .and(warp::path("testing"))
+///         .and(with_storage(storage))
+///         .and_then(handler);
 /// }
-///
-/// let route = warp::path("testing")
-///     .and(with_storage(storage))
-///     .and_then(handler);
 /// ```
 pub fn with_storage(
     storage: StorageType,

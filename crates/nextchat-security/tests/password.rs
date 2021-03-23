@@ -19,5 +19,10 @@ fn test_encryption() {
 #[test]
 #[should_panic(expected = "Security Error -> Cannot get the `APP_SECRET_KEY` variable.")]
 fn test_app_secret_key_panic() {
-    encrypt_password("1234").unwrap();
+    if env::var("APP_SECRET_KEY").is_ok() {
+        env::remove_var("APP_SECRET_KEY");
+    }
+
+    assert!(env::var("APP_SECRET_KEY").is_err());
+    encrypt_password("1234").unwrap_or(String::new());
 }
