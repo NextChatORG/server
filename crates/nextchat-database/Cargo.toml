@@ -13,3 +13,6 @@ uuid = { version = "0.8", default-features = false, features = ["serde", "v4"] }
 
 [dev-dependencies]
 tokio = { version = "1", default-features = false, features = ["macros"] }
+
+[features]
+panic-tests = []

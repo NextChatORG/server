@@ -16,6 +16,18 @@ This repository contains the source code of the server application for NextChat 
 ## Endpoints
 Read file [endpoints.md](./endpoints.md) for mroe information.
 
+## Testing
+
+### All features
+```sh
+cargo test --workspace --all-features
+```
+
+### Without panic tests
+```sh
+cargo test --workspace
+```
+
 ## Authors
 -   [@danielsolartech](https://github.com/danielsolartech) - Initial project
 -   [@JheysonDev](https://github.com/JheysonDev) - Icon Design
